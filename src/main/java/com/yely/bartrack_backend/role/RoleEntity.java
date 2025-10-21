@@ -41,31 +41,16 @@ public class RoleEntity {
     @ManyToMany(mappedBy = "roles")
     private Set<UserEntity> users;
 
-    /**
-     * Creates a predefined <b>Admin role</b>.
-     * This is useful for initializing the DB with standard roles.
-     * 
-     * @return Role with administrator privileges (full access to patient management
-     *         and all appointments).
-     */
     public static RoleEntity adminRole() {
         return RoleEntity.builder()
                 .name("ROLE_ADMIN")
-                // .description("Administrator with full access")
+
                 .build();
     }
 
-    /**
-     * Creates a predefined <b>Client role</b>
-     * This is useful for initializing the DB with standard roles.
-     * 
-     * @return Role with client privileges (limited access to only their own
-     *         appointments)
-     */
     public static RoleEntity clientRole() {
         return RoleEntity.builder()
-                .name("ROLE_CLIENT")
-                // .description("Client with limited access to own data")
+                .name("ROLE_USER")
                 .build();
     }
 
