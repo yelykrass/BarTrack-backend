@@ -34,7 +34,7 @@ public class UserEntity {
     @Column(name = "id_user")
     private Long id;
 
-    private String email;
+    private String username;
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
