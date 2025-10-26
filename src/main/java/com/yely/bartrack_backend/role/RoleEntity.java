@@ -31,16 +31,3 @@ public class RoleEntity {
     private Set<UserEntity> users;
 
 }
-
-// public static RoleEntity adminRole() {
-// return RoleEntity.builder()
-// .name("ROLE_ADMIN")
-
-// .build();
-// }
-
-// public static RoleEntity clientRole() {
-// return RoleEntity.builder()
-// .name("ROLE_USER")
-// .build();
-// }

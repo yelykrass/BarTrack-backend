@@ -60,7 +60,6 @@ public class SecurityConfiguration {
 
         @Bean
         public PasswordEncoder passwordEncoder() {
-                System.out.println("DEBUG: BCryptPasswordEncoder створено");
                 return new BCryptPasswordEncoder();
         }
 
