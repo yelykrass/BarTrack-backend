@@ -12,22 +12,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "roles")
 @Data
-
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@Builder
 
 public class RoleEntity {
 
@@ -41,17 +30,17 @@ public class RoleEntity {
     @ManyToMany(mappedBy = "roles")
     private Set<UserEntity> users;
 
-    // public static RoleEntity adminRole() {
-    // return RoleEntity.builder()
-    // .name("ROLE_ADMIN")
-
-    // .build();
-    // }
-
-    // public static RoleEntity clientRole() {
-    // return RoleEntity.builder()
-    // .name("ROLE_USER")
-    // .build();
-    // }
-
 }
+
+// public static RoleEntity adminRole() {
+// return RoleEntity.builder()
+// .name("ROLE_ADMIN")
+
+// .build();
+// }
+
+// public static RoleEntity clientRole() {
+// return RoleEntity.builder()
+// .name("ROLE_USER")
+// .build();
+// }

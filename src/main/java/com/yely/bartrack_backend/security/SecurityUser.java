@@ -2,6 +2,7 @@ package com.yely.bartrack_backend.security;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -32,8 +33,11 @@ public class SecurityUser implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
 
-        for (RoleEntity role : user.getRoles()) {
-            System.out.println("User role: " + role.getName());
+        Set<RoleEntity> roles = user.getRoles();
+        System.out.println("DEBUG: ролей у користувача: " + roles.size());
+
+        for (RoleEntity role : roles) {
+            System.out.println("DEBUG: роль користувача: " + role.getName());
             authorities.add(new SimpleGrantedAuthority(role.getName()));
         }
 

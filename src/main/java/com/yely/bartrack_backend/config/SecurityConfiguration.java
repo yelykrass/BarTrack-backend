@@ -20,9 +20,9 @@ import com.yely.bartrack_backend.security.JpaUserDetailsService;
 @EnableWebSecurity
 public class SecurityConfiguration {
         @Value("${api-endpoint}")
-        private String endpoint;
+        String endpoint;
 
-        private JpaUserDetailsService jpaUserDetailsService;
+        private final JpaUserDetailsService jpaUserDetailsService;
 
         public SecurityConfiguration(JpaUserDetailsService jpaUserDetailsService) {
                 this.jpaUserDetailsService = jpaUserDetailsService;
@@ -32,9 +32,7 @@ public class SecurityConfiguration {
         SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
                                 .cors(withDefaults())
-                                .csrf(csrf -> csrf
-                                                .ignoringRequestMatchers("/h2-console/**")
-                                                .disable())
+                                .csrf(csrf -> csrf.disable())
                                 .headers(header -> header
                                                 .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
 
@@ -49,7 +47,7 @@ public class SecurityConfiguration {
 
                                                 .requestMatchers(HttpMethod.POST, endpoint + "/register")
                                                 .hasRole("ADMIN")
-                                                .requestMatchers(endpoint + "/login").hasAnyRole("USER", "ADMIN")
+                                                .requestMatchers(endpoint + "/login").permitAll()
                                                 .requestMatchers(HttpMethod.GET, endpoint + "/private").hasRole("ADMIN")
                                                 .anyRequest().authenticated())
                                 .userDetailsService(jpaUserDetailsService)
@@ -62,6 +60,8 @@ public class SecurityConfiguration {
 
         @Bean
         public PasswordEncoder passwordEncoder() {
+                System.out.println("DEBUG: BCryptPasswordEncoder створено");
                 return new BCryptPasswordEncoder();
         }
+
 }

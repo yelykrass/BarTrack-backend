@@ -17,19 +17,13 @@ public class JpaUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("🔹 [DEBUG] Запит на аутентифікацію користувача: " + username);
-
+        System.out.println("DEBUG: loadUserByUsername -> " + username);
         return userRepository.findByUsername(username)
                 .map(user -> {
-                    System.out.println("✅ [DEBUG] Користувача знайдено: " + user.getUsername());
-                    System.out.println("🔑 [DEBUG] Його роль(і): " + user.getRoles());
+                    System.out.println("DEBUG: створюємо SecurityUser");
                     return new SecurityUser(user);
                 })
-                .orElseThrow(() -> {
-                    System.out.println("❌ [DEBUG] Користувача не знайдено: " + username);
-                    return new UsernameNotFoundException("User not found: " + username);
-                });
-
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         // .map(SecurityUser::new)
         // .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
