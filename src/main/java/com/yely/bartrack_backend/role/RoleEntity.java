@@ -41,17 +41,17 @@ public class RoleEntity {
     @ManyToMany(mappedBy = "roles")
     private Set<UserEntity> users;
 
-    public static RoleEntity adminRole() {
-        return RoleEntity.builder()
-                .name("ROLE_ADMIN")
+    // public static RoleEntity adminRole() {
+    // return RoleEntity.builder()
+    // .name("ROLE_ADMIN")
 
-                .build();
-    }
+    // .build();
+    // }
 
-    public static RoleEntity clientRole() {
-        return RoleEntity.builder()
-                .name("ROLE_USER")
-                .build();
-    }
+    // public static RoleEntity clientRole() {
+    // return RoleEntity.builder()
+    // .name("ROLE_USER")
+    // .build();
+    // }
 
 }

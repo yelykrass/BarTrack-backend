@@ -20,7 +20,7 @@ import com.yely.bartrack_backend.security.JpaUserDetailsService;
 @EnableWebSecurity
 public class SecurityConfiguration {
         @Value("${api-endpoint}")
-        String endpoint;
+        private String endpoint;
 
         private JpaUserDetailsService jpaUserDetailsService;
 
@@ -44,8 +44,9 @@ public class SecurityConfiguration {
                                                 .invalidateHttpSession(true)
                                                 .deleteCookies("JSESSIONID"))
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("h2-console/**").permitAll()
+                                                .requestMatchers("/h2-console/**").permitAll()
                                                 .requestMatchers("/public").permitAll()
+
                                                 .requestMatchers(HttpMethod.POST, endpoint + "/register")
                                                 .hasRole("ADMIN")
                                                 .requestMatchers(endpoint + "/login").hasAnyRole("USER", "ADMIN")
@@ -60,7 +61,7 @@ public class SecurityConfiguration {
         }
 
         @Bean
-        PasswordEncoder passwordEncoder() {
+        public PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
         }
 }
