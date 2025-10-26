@@ -3,9 +3,9 @@ INSERT INTO roles (id_role, name) VALUES (default, 'ROLE_ADMIN');
 INSERT INTO roles (id_role, name) VALUES (default, 'ROLE_USER');
 
 /* Users (bcrypt */
-INSERT INTO users (id_user, email, password) 
+INSERT INTO users (id_user, username, password) 
 VALUES (default, 'admin@bartrack.com', '$2a$12$8LegtLQWe717tIPvZeivjuqKnaAs5.bm0Q05.5GrAmcKzXw2NjoUO'); -- пароль: 123456
-INSERT INTO users (id_user, email, password) 
+INSERT INTO users (id_user, username, password) 
 VALUES (default, 'bartender@bartrack.com', '$2a$12$8LegtLQWe717tIPvZeivjuqKnaAs5.bm0Q05.5GrAmcKzXw2NjoUO'); -- пароль: 123456
 
 /* Roles_users */
