@@ -24,4 +24,9 @@ public class AuthController {
         return ResponseEntity.accepted().body(authResponse);
     }
 
+    @GetMapping("/private")
+    public ResponseEntity<String> foo() {
+        System.out.println("ffffff");
+        return ResponseEntity.ok().body("Foo");
+    }
 }
