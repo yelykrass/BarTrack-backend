@@ -46,7 +46,9 @@ public class SecurityConfiguration {
                                                 .logoutUrl(endpoint + "/logout")
                                                 .invalidateHttpSession(true)
                                                 .deleteCookies("JSESSIONID"))
+
                                 .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers("/api/v1/check-session").permitAll()
                                                 .requestMatchers("/h2-console/**").permitAll()
                                                 .requestMatchers("/public").permitAll()
 
@@ -72,7 +74,7 @@ public class SecurityConfiguration {
         CorsConfigurationSource corsConfiguration() {
                 CorsConfiguration configuration = new CorsConfiguration();
                 configuration.setAllowCredentials(true);
-                configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+                configuration.setAllowedOrigins(Arrays.asList("https://localhost:5173"));
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
                 configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
                 configuration.setExposedHeaders(Arrays.asList("Authorization"));
