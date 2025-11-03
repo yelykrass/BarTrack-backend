@@ -1,5 +1,6 @@
 package com.yely.bartrack_backend.user;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -17,5 +18,11 @@ public class UserService {
     public UserEntity getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
+    public UserEntity getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Current user not found"));
     }
 }

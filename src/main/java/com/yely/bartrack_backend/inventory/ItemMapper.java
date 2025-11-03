@@ -1,21 +1,17 @@
 package com.yely.bartrack_backend.inventory;
 
-import java.time.LocalDateTime;
-
 import com.yely.bartrack_backend.user.UserEntity;
 
 public class ItemMapper {
+
     public static ItemEntity toEntity(ItemDTORequest dto, UserEntity user) {
         return ItemEntity.builder()
                 .name(dto.name())
-                .quantity(dto.quantity())
-                .unitPrice(dto.unitPrice())
                 .category(dto.category())
-                .supplier(dto.supplier())
+                .quantity(dto.quantity())
+                .price(dto.price())
                 .expiryDate(dto.expiryDate())
-                .createdBy(user)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .user(user)
                 .build();
     }
 
@@ -23,12 +19,10 @@ public class ItemMapper {
         return new ItemDTOResponse(
                 e.getId(),
                 e.getName(),
-                e.getQuantity(),
-                e.getUnitPrice(),
                 e.getCategory(),
-                e.getSupplier(),
+                e.getQuantity(),
+                e.getPrice(),
                 e.getExpiryDate(),
-                e.getCreatedAt(),
-                e.getUpdatedAt());
+                e.getUser().getUsername());
     }
 }

@@ -1,7 +1,5 @@
 package com.yely.bartrack_backend.inventory;
 
-import java.time.LocalDateTime;
-
 import com.yely.bartrack_backend.user.UserEntity;
 
 import jakarta.persistence.Column;
@@ -33,17 +31,13 @@ public class ItemEntity {
     private Long id;
 
     private String name;
-    private int quantity;
-    private double unitPrice;
     private String category;
-    private String supplier;
-
-    private LocalDate expiryDate;
+    private int quantity;
+    private double price;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by", nullable = false)
-    private UserEntity createdBy;
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDate expiryDate;
 }
