@@ -18,3 +18,10 @@ INSERT INTO drinks (id_drink, name, price, stock_quantity) VALUES (default, 'Mar
 INSERT INTO drinks (id_drink, name, price, stock_quantity) VALUES (default, 'Cerveza', 4.50, 50);
 INSERT INTO drinks (id_drink, name, price, stock_quantity) VALUES (default, 'Vino tinto', 6.00, 30);
 */
+/* Items */
+INSERT INTO items (id_item, name, category, quantity, price, user_id, expiry_date) VALUES
+(default, 'Whiskey 12y', 'Beverages', 20, 50, 1, '2025-12-31'),
+(default, 'Red Wine', 'Beverages', 15, 30, 1, '2025-11-30'),
+(default, 'Gin', 'Beverages', 10, 45, 2, '2026-01-15'),
+(default, 'Vodka', 'Beverages', 8, 40, 2, '2026-02-28'),
+(default, 'Rum', 'Beverages', 12, 35, 2, '2025-10-20');
