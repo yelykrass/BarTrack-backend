@@ -21,6 +21,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.yely.bartrack_backend.security.JpaUserDetailsService;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
@@ -45,7 +47,9 @@ public class SecurityConfiguration {
                                 .logout(out -> out
                                                 .logoutUrl(endpoint + "/logout")
                                                 .invalidateHttpSession(true)
-                                                .deleteCookies("JSESSIONID"))
+                                                                
+                                                .deleteCookies("JSESSIONID")
+                                                .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK)))
 
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/api/v1/check-session").permitAll()
