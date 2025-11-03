@@ -1,4 +1,4 @@
-package com.yely.bartrack_backend.inventary;
+package com.yely.bartrack_backend.inventory;
 
 import java.time.LocalDateTime;
 
@@ -40,7 +40,6 @@ public class ItemEntity {
 
     private LocalDate expiryDate;
 
-    // 🔸 зв’язок із користувачем, який створив товар
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
     private UserEntity createdBy;

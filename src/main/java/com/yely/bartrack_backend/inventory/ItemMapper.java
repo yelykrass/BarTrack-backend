@@ -1,4 +1,4 @@
-package com.yely.bartrack_backend.inventary;
+package com.yely.bartrack_backend.inventory;
 
 import java.time.LocalDateTime;
 
