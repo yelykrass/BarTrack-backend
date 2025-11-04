@@ -47,9 +47,10 @@ public class SecurityConfiguration {
                                 .logout(out -> out
                                                 .logoutUrl(endpoint + "/logout")
                                                 .invalidateHttpSession(true)
-                                                                
+
                                                 .deleteCookies("JSESSIONID")
-                                                .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK)))
+                                                .logoutSuccessHandler((req, res, auth) -> res
+                                                                .setStatus(HttpServletResponse.SC_OK)))
 
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/api/v1/check-session").permitAll()

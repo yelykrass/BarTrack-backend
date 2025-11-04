@@ -37,6 +37,9 @@ public class UserEntity {
     private String username;
     private String password;
 
+    @Builder.Default
+    private boolean active = true;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     Set<RoleEntity> roles;
