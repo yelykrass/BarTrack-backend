@@ -31,7 +31,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-### Secrets ###
-/secrets/*
-!secrets/.gitkeep
