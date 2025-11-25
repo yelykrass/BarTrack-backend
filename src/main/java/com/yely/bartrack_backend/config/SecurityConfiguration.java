@@ -52,6 +52,10 @@ public class SecurityConfiguration {
                                                 // .requestMatchers("/api/v1/check-session").permitAll()
                                                 .requestMatchers(endpoint + "/auth/**").permitAll()
                                                 .requestMatchers("/h2-console/**").permitAll()
+
+                                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**",
+                                                                "/swagger-ui.html")
+                                                .permitAll()
                                                 // .requestMatchers("/public").permitAll()
 
                                                 // .requestMatchers(HttpMethod.POST, endpoint + "/register")
