@@ -1,15 +1,14 @@
 package com.yely.bartrack_backend.config;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,23 +19,28 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.yely.bartrack_backend.security.JpaUserDetailsService;
+import com.yely.bartrack_backend.security.JwtAuthenticationFilter;
+import com.yely.bartrack_backend.security.JwtUtils;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
-@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
+
 public class SecurityConfiguration {
+
+        private final JpaUserDetailsService jpaUserDetailsService;
+        private final JwtUtils jwtUtils;
+
         @Value("${api-endpoint}")
         String endpoint;
 
-        private final JpaUserDetailsService jpaUserDetailsService;
-
-        public SecurityConfiguration(JpaUserDetailsService jpaUserDetailsService) {
-                this.jpaUserDetailsService = jpaUserDetailsService;
-        }
-
         @Bean
         SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtUtils, jpaUserDetailsService);
+
                 http
                                 .cors(cors -> cors.configurationSource(corsConfiguration()))
                                 .csrf(csrf -> csrf.disable())
@@ -44,28 +48,25 @@ public class SecurityConfiguration {
                                                 .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
 
                                 .formLogin(form -> form.disable())
-                                .logout(out -> out
-                                                .logoutUrl(endpoint + "/logout")
-                                                .invalidateHttpSession(true)
-
-                                                .deleteCookies("JSESSIONID")
-                                                .logoutSuccessHandler((req, res, auth) -> res
-                                                                .setStatus(HttpServletResponse.SC_OK)))
-
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/api/v1/check-session").permitAll()
+                                                // .requestMatchers("/api/v1/check-session").permitAll()
+                                                .requestMatchers(endpoint + "/auth/**").permitAll()
                                                 .requestMatchers("/h2-console/**").permitAll()
-                                                .requestMatchers("/public").permitAll()
+                                                // .requestMatchers("/public").permitAll()
 
-                                                .requestMatchers(HttpMethod.POST, endpoint + "/register")
-                                                .hasRole("ADMIN")
-                                                .requestMatchers(endpoint + "/login").hasAnyRole("ADMIN", "USER")
-                                                .requestMatchers(HttpMethod.GET, endpoint + "/private").hasRole("ADMIN")
+                                                // .requestMatchers(HttpMethod.POST, endpoint + "/register")
+                                                // .hasRole("ADMIN")
+                                                // .requestMatchers(endpoint + "/login").hasAnyRole("ADMIN", "USER")
+                                                // .requestMatchers(HttpMethod.GET, endpoint +
+                                                // "/private").hasRole("ADMIN")
                                                 .anyRequest().authenticated())
+                                .addFilterBefore(jwtFilter,
+                                                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
                                 .userDetailsService(jpaUserDetailsService)
-                                .httpBasic(withDefaults())
-                                .sessionManagement(session -> session
-                                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+                                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .exceptionHandling(ex -> ex
+                                                .authenticationEntryPoint((req, res, ex2) -> res
+                                                                .sendError(HttpServletResponse.SC_UNAUTHORIZED)));
 
                 return http.build();
         }
@@ -80,12 +81,16 @@ public class SecurityConfiguration {
                 CorsConfiguration configuration = new CorsConfiguration();
                 configuration.setAllowCredentials(true);
                 configuration.setAllowedOrigins(Arrays.asList("https://localhost:5173"));
-                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
-                configuration.setExposedHeaders(Arrays.asList("Authorization"));
 
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
                 source.registerCorsConfiguration("/**", configuration);
                 return source;
+        }
+
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+                return authConfig.getAuthenticationManager();
         }
 }
