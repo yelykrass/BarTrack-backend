@@ -43,7 +43,7 @@ public class ItemController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<ItemDTOResponse> update(@PathVariable Long id,
             @RequestBody ItemDTORequest dto) {
         return ResponseEntity.ok(itemService.update(id, dto));
