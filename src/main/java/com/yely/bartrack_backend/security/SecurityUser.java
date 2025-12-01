@@ -10,6 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.yely.bartrack_backend.role.RoleEntity;
 import com.yely.bartrack_backend.user.UserEntity;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class SecurityUser implements UserDetails {
 
     private final UserEntity user;
@@ -33,8 +36,10 @@ public class SecurityUser implements UserDetails {
         Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 
         for (RoleEntity role : user.getRoles()) {
-            System.out.println("User role : " + role.getName());
-            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getName());
+            String roleName = role.getName();
+
+            log.debug("User role: {}", roleName);
+            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleName);
             authorities.add(authority);
         }
 
