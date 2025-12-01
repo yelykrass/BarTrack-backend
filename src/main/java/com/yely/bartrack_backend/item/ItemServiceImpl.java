@@ -1,4 +1,4 @@
-package com.yely.bartrack_backend.inventory;
+package com.yely.bartrack_backend.item;
 
 import org.springframework.security.access.AccessDeniedException;
 import java.util.List;

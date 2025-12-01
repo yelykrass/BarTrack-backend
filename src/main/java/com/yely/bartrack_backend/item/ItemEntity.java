@@ -1,4 +1,4 @@
-package com.yely.bartrack_backend.inventory;
+package com.yely.bartrack_backend.item;
 
 import com.yely.bartrack_backend.user.UserEntity;
 
