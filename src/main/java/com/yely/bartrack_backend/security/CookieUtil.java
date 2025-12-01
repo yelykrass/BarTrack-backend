@@ -7,12 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Optional;
 
-/**
- * Utility for creating / reading / deleting HttpOnly cookies.
- * Note: setting SameSite via Cookie API is not standardized in older servlet
- * API,
- * so we set the header manually when needed.
- */
 public final class CookieUtil {
 
     private CookieUtil() {
@@ -34,8 +28,6 @@ public final class CookieUtil {
         cookie.setSecure(secure);
         cookie.setPath(path == null ? "/" : path);
         cookie.setMaxAge(maxAgeSeconds);
-        // SameSite is set via header when adding to response to support older servlet
-        // containers.
         return cookie;
     }
 
