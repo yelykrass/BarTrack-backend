@@ -27,7 +27,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Value("${api-endpoint}") // "/api/v1"
+    @Value("${api-endpoint}")
     private String apiEndpoint;
 
     @Value("${jwt.access-exp-ms}")
@@ -41,7 +41,6 @@ public class AuthController {
             HttpServletResponse resp) {
         LoginResult result = authService.login(request.username(), request.password());
 
-        // create cookies
         CookieUtil.addCookie(resp,
                 CookieUtil.buildCookie("accessToken", result.accessToken(),
                         accessExpMs, true, true, "Lax", "/"),
@@ -71,7 +70,6 @@ public class AuthController {
                         refreshExpMs, true, true, "Lax", "/"),
                 "Lax");
 
-        // rotate refresh token
         CookieUtil.addCookie(resp,
                 CookieUtil.buildCookie("refreshToken", tokens.refreshToken(),
                         refreshExpMs, true, true,
