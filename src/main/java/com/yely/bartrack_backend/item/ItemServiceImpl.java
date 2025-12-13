@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.yely.bartrack_backend.domain.ResourceNotFoundException;
 import com.yely.bartrack_backend.implementations.IGenericService;
 import com.yely.bartrack_backend.user.UserEntity;
 import com.yely.bartrack_backend.user.UserService;
@@ -45,13 +46,13 @@ public class ItemServiceImpl implements IGenericService<ItemDTOResponse, ItemDTO
     public ItemDTOResponse showById(Long id) {
         return repository.findById(id)
                 .map(ItemMapper::toDTO)
-                .orElseThrow(() -> new IllegalArgumentException("Item not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
     }
 
     @Override
     public ItemDTOResponse update(Long id, ItemDTORequest dto) {
         ItemEntity existing = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Item not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
 
         UserEntity currentUser = userService.getCurrentUser(); // метод для BasicAuth
         boolean isAdmin = currentUser.getRoles().stream()
@@ -74,7 +75,7 @@ public class ItemServiceImpl implements IGenericService<ItemDTOResponse, ItemDTO
     @Override
     public void delete(Long id) {
         ItemEntity existing = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Item not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
 
         UserEntity currentUser = userService.getCurrentUser();
         boolean isAdmin = currentUser.getRoles().stream()

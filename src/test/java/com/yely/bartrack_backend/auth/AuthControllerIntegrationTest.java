@@ -144,7 +144,7 @@ public class AuthControllerIntegrationTest {
 
                 mockMvc.perform(post(API_AUTH + "/login")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{")) // ← зламаний JSON
+                                .content("{"))
                                 .andExpect(status().isBadRequest())
                                 .andExpect(jsonPath("$.message").value("Malformed JSON request"))
                                 .andExpect(jsonPath("$.error").value("Bad Request"));

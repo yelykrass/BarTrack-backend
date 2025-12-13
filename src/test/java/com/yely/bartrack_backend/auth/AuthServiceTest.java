@@ -17,6 +17,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.yely.bartrack_backend.domain.ValidationException;
 import com.yely.bartrack_backend.security.JpaUserDetailsService;
 import com.yely.bartrack_backend.security.JwtUtils;
 
@@ -90,7 +92,7 @@ class AuthServiceTest {
 
     @Test
     void testRefreshAccessTokenWithNullToken() {
-        assertThrows(IllegalArgumentException.class, () -> authService.refreshAccessToken(null));
+        assertThrows(ValidationException.class, () -> authService.refreshAccessToken(null));
 
         verifyNoInteractions(jwtUtils, userDetailsService);
     }
@@ -100,7 +102,7 @@ class AuthServiceTest {
         String invalidToken = "invalid_token";
         when(jwtUtils.validateToken(invalidToken)).thenReturn(false);
 
-        assertThrows(IllegalArgumentException.class, () -> authService.refreshAccessToken(invalidToken));
+        assertThrows(ValidationException.class, () -> authService.refreshAccessToken(invalidToken));
 
         verify(userDetailsService, never()).loadUserByUsername(any());
     }
