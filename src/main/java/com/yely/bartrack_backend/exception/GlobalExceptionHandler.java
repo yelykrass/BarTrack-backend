@@ -1,68 +1,56 @@
 package com.yely.bartrack_backend.exception;
 
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.yely.bartrack_backend.domain.ConflictException;
+import com.yely.bartrack_backend.domain.ForbiddenOperationException;
+import com.yely.bartrack_backend.domain.ResourceNotFoundException;
+import com.yely.bartrack_backend.domain.ValidationException;
+
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 
+@Slf4j
 @RestControllerAdvice
+
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
-
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "Bad Request",
-                ex.getMessage(),
-                LocalDateTime.now());
-
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationErrors(
-            org.springframework.web.bind.MethodArgumentNotValidException ex) {
-
-        String errorMessage = ex.getBindingResult().getFieldError().getDefaultMessage();
-
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "Validation Error",
-                errorMessage,
-                LocalDateTime.now());
-
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex) {
-
-        String message = ex.getMessage();
-        if (ex instanceof BadCredentialsException) {
-            message = "Invalid username or password.";
-        }
-
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.UNAUTHORIZED.value(),
-                "Unauthorized",
+    private ResponseEntity<ErrorResponse> buildResponse(String message, HttpStatus status, String path) {
+        return new ResponseEntity<>(new ErrorResponse(
+                status.value(),
+                status.getReasonPhrase(),
                 message,
-                LocalDateTime.now());
+                path,
+                LocalDateTime.now()), status);
+    }
 
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex, HttpServletRequest req) {
+        return buildResponse(ex.getMessage(), HttpStatus.NOT_FOUND, req.getRequestURI());
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorResponse> handleValidation(ValidationException ex, HttpServletRequest req) {
+        return buildResponse(ex.getMessage(), HttpStatus.BAD_REQUEST, req.getRequestURI());
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflict(ConflictException ex, HttpServletRequest req) {
+        return buildResponse(ex.getMessage(), HttpStatus.CONFLICT, req.getRequestURI());
+    }
+
+    @ExceptionHandler(ForbiddenOperationException.class)
+    public ResponseEntity<ErrorResponse> handleForbidden(ForbiddenOperationException ex, HttpServletRequest req) {
+        return buildResponse(ex.getMessage(), HttpStatus.FORBIDDEN, req.getRequestURI());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Internal Server Error",
-                "Something went wrong. Please try again later.",
-                LocalDateTime.now());
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ErrorResponse> handleGeneral(Exception ex, HttpServletRequest req) {
+        return buildResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR, req.getRequestURI());
     }
 }
