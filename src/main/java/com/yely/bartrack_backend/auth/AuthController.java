@@ -25,66 +25,74 @@ import com.yely.bartrack_backend.user.LoginResponseDTO;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authService;
+        private final AuthService authService;
 
-    @Value("${api-endpoint}")
-    private String apiEndpoint;
+        @Value("${api-endpoint}")
+        private String apiEndpoint;
 
-    @Value("${jwt.access-exp-ms}")
-    private int accessExpMs;
+        @Value("${jwt.access-exp-ms}")
+        private long accessExpMs;
 
-    @Value("${jwt.refresh-exp-ms}")
-    private int refreshExpMs;
+        @Value("${jwt.refresh-exp-ms}")
+        private long refreshExpMs;
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request,
-            HttpServletResponse resp) {
-        LoginResult result = authService.login(request.username(), request.password());
+        private int accessExpSeconds() {
+                return Math.toIntExact(accessExpMs / 1000);
+        }
 
-        CookieUtil.addCookie(resp,
-                CookieUtil.buildCookie("accessToken", result.accessToken(),
-                        accessExpMs, true, true, "Lax", "/"),
-                "Lax");
+        private int refreshExpSeconds() {
+                return Math.toIntExact(refreshExpMs / 1000);
+        }
 
-        CookieUtil.addCookie(resp,
-                CookieUtil.buildCookie("refreshToken", result.refreshToken(),
-                        refreshExpMs, true, true,
-                        "Strict", apiEndpoint
-                                + "/auth"),
-                "Strict");
+        @PostMapping("/login")
+        public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request,
+                        HttpServletResponse resp) {
+                LoginResult result = authService.login(request.username(), request.password());
 
-        List<String> roles = result.authorities().stream().map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
-        boolean active = true;
+                CookieUtil.addCookie(resp,
+                                CookieUtil.buildCookie("accessToken", result.accessToken(),
+                                                accessExpSeconds(), true, true, "Lax", "/"),
+                                "Lax");
 
-        return ResponseEntity.ok(new LoginResponseDTO(result.username(), roles, active));
-    }
+                CookieUtil.addCookie(resp,
+                                CookieUtil.buildCookie("refreshToken", result.refreshToken(),
+                                                refreshExpSeconds(), true, true,
+                                                "Strict", apiEndpoint
+                                                                + "/auth"),
+                                "Strict");
 
-    @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(HttpServletRequest req, HttpServletResponse resp) {
-        String refresh = CookieUtil.getCookieValue(req, "refreshToken").orElse(null);
-        TokenPair tokens = authService.refreshAccessToken(refresh);
+                List<String> roles = result.authorities().stream().map(GrantedAuthority::getAuthority)
+                                .collect(Collectors.toList());
+                boolean active = true;
 
-        CookieUtil.addCookie(resp,
-                CookieUtil.buildCookie("accessToken", tokens.accessToken(),
-                        refreshExpMs, true, true, "Lax", "/"),
-                "Lax");
+                return ResponseEntity.ok(new LoginResponseDTO(result.username(), roles, active));
+        }
 
-        CookieUtil.addCookie(resp,
-                CookieUtil.buildCookie("refreshToken", tokens.refreshToken(),
-                        refreshExpMs, true, true,
-                        "Strict", apiEndpoint
-                                + "/auth"),
-                "Strict");
+        @PostMapping("/refresh")
+        public ResponseEntity<?> refresh(HttpServletRequest req, HttpServletResponse resp) {
+                String refresh = CookieUtil.getCookieValue(req, "refreshToken").orElse(null);
+                TokenPair tokens = authService.refreshAccessToken(refresh);
 
-        return ResponseEntity.ok().build();
-    }
+                CookieUtil.addCookie(resp,
+                                CookieUtil.buildCookie("accessToken", tokens.accessToken(),
+                                                accessExpSeconds(), true, true, "Lax", "/"),
+                                "Lax");
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletResponse resp) {
-        CookieUtil.deleteCookie(resp, "accessToken", "/", "Lax");
-        CookieUtil.deleteCookie(resp, "refreshToken", apiEndpoint + "/auth", "Strict");
-        return ResponseEntity.ok().build();
-    }
+                CookieUtil.addCookie(resp,
+                                CookieUtil.buildCookie("refreshToken", tokens.refreshToken(),
+                                                refreshExpSeconds(), true, true,
+                                                "Strict", apiEndpoint
+                                                                + "/auth"),
+                                "Strict");
+
+                return ResponseEntity.ok().build();
+        }
+
+        @PostMapping("/logout")
+        public ResponseEntity<?> logout(HttpServletResponse resp) {
+                CookieUtil.deleteCookie(resp, "accessToken", "/", "Lax");
+                CookieUtil.deleteCookie(resp, "refreshToken", apiEndpoint + "/auth", "Strict");
+                return ResponseEntity.ok().build();
+        }
 
 }
