@@ -2,6 +2,8 @@ package com.yely.bartrack_backend.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -52,5 +54,34 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneral(Exception ex, HttpServletRequest req) {
         return buildResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR, req.getRequestURI());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpServletRequest req) {
+
+        String message = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(err -> err.getField() + ": " + err.getDefaultMessage())
+                .findFirst()
+                .orElse("Validation failed");
+
+        return buildResponse(
+                message,
+                HttpStatus.BAD_REQUEST,
+                req.getRequestURI());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidJson(
+            HttpMessageNotReadableException ex,
+            HttpServletRequest req) {
+
+        return buildResponse(
+                "Malformed JSON request",
+                HttpStatus.BAD_REQUEST,
+                req.getRequestURI());
     }
 }
