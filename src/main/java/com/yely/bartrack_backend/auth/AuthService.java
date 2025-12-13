@@ -6,6 +6,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.yely.bartrack_backend.domain.ResourceNotFoundException;
+import com.yely.bartrack_backend.domain.ValidationException;
 import com.yely.bartrack_backend.security.JpaUserDetailsService;
 import com.yely.bartrack_backend.security.JwtUtils;
 
@@ -31,15 +33,20 @@ public class AuthService {
     }
 
     public TokenPair refreshAccessToken(String refreshToken) {
-        if (refreshToken == null || !jwtUtils.validateToken(refreshToken)) {
-            throw new IllegalArgumentException("Invalid refresh token");
+        if (refreshToken == null) {
+            throw new ValidationException("Refresh token is missing");
+        }
+        if (!jwtUtils.validateToken(refreshToken)) {
+            throw new ValidationException("Refresh token is invalid");
         }
 
         String username = jwtUtils.getUsernameFromToken(refreshToken);
         UserDetails ud = userDetailsService.loadUserByUsername(username);
+        if (ud == null) {
+            throw new ResourceNotFoundException("User not found");
+        }
 
         String newAccess = jwtUtils.generateAccessToken(ud);
-        // optional: rotate refresh token to new one
         String newRefresh = jwtUtils.generateRefreshToken(ud);
 
         return new TokenPair(newAccess, newRefresh);
