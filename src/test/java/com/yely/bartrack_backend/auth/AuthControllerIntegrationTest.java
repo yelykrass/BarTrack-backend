@@ -27,7 +27,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import java.util.List;
 
 @SpringBootTest
@@ -69,7 +68,10 @@ public class AuthControllerIntegrationTest {
                                 .andExpect(jsonPath("$.username").value("user"))
                                 .andExpect(cookie().value("accessToken", "access-token-xyz"))
                                 .andExpect(cookie().httpOnly("accessToken", true))
-                                .andExpect(cookie().value("refreshToken", "refresh-token-xyz"));
+                                .andExpect(cookie().maxAge("accessToken", 900))
+                                .andExpect(cookie().value("refreshToken", "refresh-token-xyz"))
+                                .andExpect(cookie().maxAge("refreshToken", 604800))
+                                .andExpect(jsonPath("$.roles[0]").value("ROLE_USER"));
         }
 
         @Test

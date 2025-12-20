@@ -26,7 +26,7 @@ class CookieUtilTest {
         MockHttpServletRequest req = new MockHttpServletRequest();
         Cookie c1 = new Cookie("a", "1");
         Cookie c2 = new Cookie("target", "value123");
-        req.setCookies(c1, c2); // Використовуємо вбудований метод Spring Mock
+        req.setCookies(c1, c2);
 
         Optional<String> opt = CookieUtil.getCookieValue(req, "target");
         assertThat(opt.isPresent(), is(true));
@@ -47,7 +47,7 @@ class CookieUtilTest {
         Cookie c = CookieUtil.buildCookie("name", "val", 3600, true, false, "Strict", null);
         assertThat(c.getName(), is("name"));
         assertThat(c.getValue(), is("val"));
-        assertThat(c.getPath(), is("/")); // null path becomes "/"
+        assertThat(c.getPath(), is("/"));
         assertThat(c.getMaxAge(), is(3600));
         assertThat(c.getSecure(), is(true));
         assertThat(c.isHttpOnly(), is(false));
@@ -55,11 +55,10 @@ class CookieUtilTest {
 
     @Test
     void addCookie_constructsSetCookieHeader_withAllAttributes() {
-        MockHttpServletResponse resp = new MockHttpServletResponse(); // Використовуємо Spring Mock
+        MockHttpServletResponse resp = new MockHttpServletResponse();
         Cookie cookie = CookieUtil.buildCookie("sid", "abc123", 7200, true, true, "Lax", "/app");
         CookieUtil.addCookie(resp, cookie, "Lax");
 
-        // Spring MockHttpServletResponse має прямий метод отримання заголовків
         List<String> headers = resp.getHeaders("Set-Cookie");
         assertThat(headers, hasSize(1));
         String header = headers.get(0);
@@ -72,7 +71,6 @@ class CookieUtilTest {
         assertThat(header, containsString("SameSite=Lax"));
     }
 
-    // Тест для покриття гілки: if (cookie.getMaxAge() >= 0)
     @Test
     void addCookie_omitsMaxAgeWhenNegative() {
         MockHttpServletResponse resp = new MockHttpServletResponse();
@@ -93,7 +91,7 @@ class CookieUtilTest {
 
         MockHttpServletResponse resp2 = new MockHttpServletResponse();
         Cookie cookie2 = CookieUtil.buildCookie("k2", "v2", -1, false, false, null, null);
-        CookieUtil.addCookie(resp2, cookie2, "   "); // blank should be treated as absent
+        CookieUtil.addCookie(resp2, cookie2, "   ");
         String header2 = resp2.getHeader("Set-Cookie");
         assertThat(header2, not(containsString("SameSite=")));
     }

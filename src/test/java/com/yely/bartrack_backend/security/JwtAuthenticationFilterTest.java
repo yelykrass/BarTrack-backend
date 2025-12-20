@@ -84,7 +84,6 @@ public class JwtAuthenticationFilterTest {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         assertThat("Authentication should be set", auth, is(notNullValue()));
         assertThat("Principal should be the loaded UserDetails", auth.getPrincipal(), is(userDetails));
-        // credentials should be null as set in the filter
         assertThat("Credentials should be null", auth.getCredentials(), is(nullValue()));
     }
 

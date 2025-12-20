@@ -26,8 +26,7 @@ public class JwtUtils {
     public JwtUtils(@Value("${jwt.secret}") String secret,
             @Value("${jwt.access-exp-ms}") long accessExpMs,
             @Value("${jwt.refresh-exp-ms}") long refreshExpMs) {
-        // secret is expected as base64 or raw; here we decode as base64 if length
-        // appropriate
+
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.accessExpMs = accessExpMs;

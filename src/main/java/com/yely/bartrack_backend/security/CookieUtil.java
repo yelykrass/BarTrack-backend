@@ -32,8 +32,6 @@ public final class CookieUtil {
     }
 
     public static void addCookie(HttpServletResponse resp, Cookie cookie, String sameSite) {
-        // Some servlet containers don't expose SameSite via Cookie API, so we construct
-        // header.
         StringBuilder sb = new StringBuilder();
         sb.append(cookie.getName()).append("=").append(cookie.getValue())
                 .append("; Path=").append(cookie.getPath() == null ? "/" : cookie.getPath());
