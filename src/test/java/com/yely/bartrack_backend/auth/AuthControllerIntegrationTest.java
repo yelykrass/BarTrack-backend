@@ -151,4 +151,26 @@ public class AuthControllerIntegrationTest {
                                 .andExpect(jsonPath("$.message").value("Malformed JSON request"))
                                 .andExpect(jsonPath("$.error").value("Bad Request"));
         }
+
+        @Test
+        @DisplayName("POST /refresh success - returns 200 and sets new cookies")
+        void refresh_withValidRefreshToken_setsNewCookies() throws Exception {
+
+                // given
+                TokenPair tokens = new TokenPair("new-access-token", "new-refresh-token");
+
+                when(authService.refreshAccessToken("refresh-token-xyz"))
+                                .thenReturn(tokens);
+
+                // when + then
+                mockMvc.perform(post(API_AUTH + "/refresh")
+                                .cookie(new jakarta.servlet.http.Cookie("refreshToken", "refresh-token-xyz")))
+                                .andExpect(status().isOk())
+                                .andExpect(cookie().value("accessToken", "new-access-token"))
+                                .andExpect(cookie().httpOnly("accessToken", true))
+                                .andExpect(cookie().maxAge("accessToken", 900))
+                                .andExpect(cookie().value("refreshToken", "new-refresh-token"))
+                                .andExpect(cookie().httpOnly("refreshToken", true))
+                                .andExpect(cookie().maxAge("refreshToken", 604800));
+        }
 }

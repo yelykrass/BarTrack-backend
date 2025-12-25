@@ -14,10 +14,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.yely.bartrack_backend.domain.ForbiddenOperationException;
+import com.yely.bartrack_backend.domain.ResourceNotFoundException;
 import com.yely.bartrack_backend.domain.ValidationException;
 import com.yely.bartrack_backend.security.JpaUserDetailsService;
 import com.yely.bartrack_backend.security.JwtUtils;
@@ -105,5 +108,32 @@ class AuthServiceTest {
         assertThrows(ValidationException.class, () -> authService.refreshAccessToken(invalidToken));
 
         verify(userDetailsService, never()).loadUserByUsername(any());
+    }
+
+    @Test
+    void login_withBlankUsername_throwsValidationException() {
+        assertThrows(ValidationException.class,
+                () -> authService.login("", "password"));
+    }
+
+    @Test
+    void login_whenAccountLocked_throwsForbiddenException() {
+        when(authenticationManager.authenticate(any()))
+                .thenThrow(new LockedException("locked"));
+
+        assertThrows(ForbiddenOperationException.class,
+                () -> authService.login("user", "pass"));
+    }
+
+    @Test
+    void refreshAccessToken_userNotFound_throwsException() {
+        String token = "valid";
+
+        when(jwtUtils.validateToken(token)).thenReturn(true);
+        when(jwtUtils.getUsernameFromToken(token)).thenReturn("ghost");
+        when(userDetailsService.loadUserByUsername("ghost")).thenReturn(null);
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> authService.refreshAccessToken(token));
     }
 }
