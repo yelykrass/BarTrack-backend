@@ -8,4 +8,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     public Optional<UserEntity> findByUsername(String username);
 
+    public boolean existsByUsernameIgnoreCase(String username);
+
 }

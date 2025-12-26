@@ -25,4 +25,8 @@ public class UserService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("Current user not found"));
     }
+
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsernameIgnoreCase(username);
+    }
 }
