@@ -8,6 +8,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.yely.bartrack_backend.domain.ResourceNotFoundException;
+
 import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.sameInstance;
@@ -53,7 +56,7 @@ class UserServiceTest {
     void getUserById_throwsWhenNotFound() {
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> userService.getUserById(2L));
+        ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(2L));
         assertThat(ex.getMessage(), is("User not found"));
     }
 
@@ -76,7 +79,26 @@ class UserServiceTest {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, null));
         when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> userService.getCurrentUser());
+        ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class,
+                () -> userService.getCurrentUser());
         assertThat(ex.getMessage(), is("Current user not found"));
+    }
+
+    @Test
+    void existsByUsername_returnsTrueWhenExists() {
+        when(userRepository.existsByUsernameIgnoreCase("test@example.com")).thenReturn(true);
+
+        boolean result = userService.existsByUsername("test@example.com");
+
+        assertThat(result, is(true));
+    }
+
+    @Test
+    void existsByUsername_returnsFalseWhenNotExists() {
+        when(userRepository.existsByUsernameIgnoreCase("noone@example.com")).thenReturn(false);
+
+        boolean result = userService.existsByUsername("noone@example.com");
+
+        assertThat(result, is(false));
     }
 }
