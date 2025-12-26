@@ -4,6 +4,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.yely.bartrack_backend.domain.ValidationException;
+import com.yely.bartrack_backend.role.RoleService;
+import com.yely.bartrack_backend.user.UserEntity;
 import com.yely.bartrack_backend.user.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -13,27 +15,28 @@ import lombok.RequiredArgsConstructor;
 public class RegisterService {
 
     private final UserService userService;
+    private final RoleService roleService;
+    private final PasswordPolicy passwordPolicy;
     private final PasswordEncoder passwordEncoder;
 
-    public RegisterDTOResponse registerUser(RegisterDTORequest dto) {
+    public UserEntity registerUser(RegisterDTORequest dto) {
+        String username = dto.username().toLowerCase();
 
-        if (dto.username() == null || dto.username().isBlank()
-                || dto.password() == null || dto.password().isBlank()) {
-            throw new ValidationException("Username and password must be provided");
+        if (userService.existsByUsername(username)) {
+            throw new ValidationException("User with this email already exists");
         }
 
-        if (userService.existsByUsername(dto.username())) {
-            throw new ValidationException("User already exists");
-        }
+        passwordPolicy.validate(dto.password());
 
         String hashedPassword = passwordEncoder.encode(dto.password());
 
-        userService.save(
-                dto.username(),
-                hashedPassword);
+        UserEntity newUser = UserEntity.builder()
+                .username(username)
+                .password(hashedPassword)
+                .roles(roleService.assignDefaultRole())
+                .active(true)
+                .build();
 
-        return new RegisterDTOResponse(
-                "User registered successfully",
-                dto.username());
+        return userService.save(newUser);
     }
 }
