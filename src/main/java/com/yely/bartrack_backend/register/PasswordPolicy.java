@@ -8,6 +8,9 @@ import com.yely.bartrack_backend.domain.ValidationException;
 public class PasswordPolicy {
 
     public void validate(String password) {
+        if (!password.matches("^[\\x00-\\x7F]+$")) {
+            throw new ValidationException("Password must contain only Latin characters");
+        }
         if (password.length() < 10) {
             throw new ValidationException("Password must be at least 10 characters long");
         }
