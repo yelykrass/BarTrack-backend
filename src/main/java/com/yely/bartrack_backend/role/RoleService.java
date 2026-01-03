@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import com.yely.bartrack_backend.domain.ResourceNotFoundException;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -14,7 +16,8 @@ public class RoleService {
     private final RoleRepository repository;
 
     public RoleEntity getById(Long id) {
-        return repository.findById(id).orElseThrow(); // OJO se devería devolver una exception concreta
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + id));
     }
 
     public Set<RoleEntity> assignDefaultRole() {
