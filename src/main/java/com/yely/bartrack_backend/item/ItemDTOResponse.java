@@ -1,13 +1,13 @@
 package com.yely.bartrack_backend.item;
 
-import java.time.LocalDate;
+import lombok.Builder;
 
+@Builder
 public record ItemDTOResponse(Long id,
-                String name,
-                String category,
-                int quantity,
-                double price,
-                LocalDate expiryDate,
-                String username) {
+        String name,
+        String category,
+        Integer quantity,
+        Double price,
+        boolean active) {
 
 }
