@@ -12,10 +12,9 @@ VALUES (default, 'bartender@bartrack.com', '$2a$10$Ck5.2ulLbeh7ux1WPOMedOXsRDKIR
 INSERT INTO roles_users (role_id, user_id) VALUES (1, 1); -- admin -> ROLE_ADMIN
 INSERT INTO roles_users (role_id, user_id) VALUES (2, 2); -- bartender -> ROLE_USER
 
-INSERT INTO items (id_item, name, category, quantity, price, user_id, expiry_date)
-VALUES
-    (DEFAULT, 'Whiskey 12y', 'Beverages', 20, 25.00, 1, '2025-12-31'),
-    (DEFAULT, 'Red Wine', 'Beverages', 15, 12.50, 1, '2025-11-30'),
-    (DEFAULT, 'Gin', 'Beverages', 10, 18.00, 1, '2026-01-15'),
-    (DEFAULT, 'Vodka', 'Beverages', 8, 14.00, 1, '2026-02-28'),
-    (DEFAULT, 'Rum', 'Beverages', 12, 16.00, 1, '2025-10-20');
+INSERT INTO items (id_item, name, category, quantity, price, active) VALUES
+(DEFAULT, 'Whiskey 12y', 'Beverages', 20, 25.00, true),
+(DEFAULT, 'Red Wine', 'Beverages', 15, 12.50, true),
+(DEFAULT, 'Gin', 'Beverages', 10, 18.00, true),
+(DEFAULT, 'Vodka', 'Beverages', 8, 14.00, true),
+(DEFAULT, 'Rum', 'Beverages', 12, 16.00, true);
