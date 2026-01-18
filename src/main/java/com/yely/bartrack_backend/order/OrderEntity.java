@@ -60,4 +60,10 @@ public class OrderEntity {
         items.add(item);
         item.setOrder(this);
     }
+
+    public void calculateAndSetTotal() {
+        this.totalPrice = items.stream()
+                .mapToDouble(item -> item.getPricePerUnit() * item.getQuantity())
+                .sum();
+    }
 }

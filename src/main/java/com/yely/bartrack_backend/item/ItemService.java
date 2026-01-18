@@ -68,4 +68,9 @@ public class ItemService {
         }
         repository.deleteById(id);
     }
+
+    public ItemEntity getEntityById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
+    }
 }
