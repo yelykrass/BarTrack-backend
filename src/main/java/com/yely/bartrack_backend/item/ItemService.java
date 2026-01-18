@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.yely.bartrack_backend.domain.ConflictException;
 import com.yely.bartrack_backend.domain.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +27,10 @@ public class ItemService {
 
     @Transactional
     public ItemDTOResponse storeEntity(ItemDTORequest dto) {
+        if (repository.existsByName(dto.name())) {
+            throw new ConflictException("Item with name '" + dto.name() + "' already exists");
+        }
+
         ItemEntity entity = ItemMapper.toEntity(dto);
         return ItemMapper.toDTO(repository.save(entity));
     }
@@ -41,6 +46,9 @@ public class ItemService {
         ItemEntity existing = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
 
+        if (!existing.getName().equals(dto.name()) && repository.existsByName(dto.name())) {
+            throw new ConflictException("Cannot rename: item with name '" + dto.name() + "' already exists");
+        }
         existing.setName(dto.name());
         existing.setCategory(dto.category());
         existing.setPrice(dto.price());

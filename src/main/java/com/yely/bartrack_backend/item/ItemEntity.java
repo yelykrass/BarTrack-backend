@@ -25,7 +25,7 @@ public class ItemEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_item")
     private Long id;
-
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
     private String category;
     private Integer quantity;
