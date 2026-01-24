@@ -4,7 +4,12 @@ import java.util.List;
 
 import com.yely.bartrack_backend.orderItem.OrderItemRequest;
 
-public record OrderDTORequest(List<OrderItemRequest> items,
-        PaymentMethod paymentMethod) {
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
+public record OrderDTORequest(
+                @NotEmpty(message = "Order must contain at least one item") @Valid List<OrderItemRequest> items,
+                @NotNull(message = "Payment method must be specified") PaymentMethod paymentMethod) {
 
 }
