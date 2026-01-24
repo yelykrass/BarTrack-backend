@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.yely.bartrack_backend.domain.ConflictException;
 import com.yely.bartrack_backend.domain.ResourceNotFoundException;
+import com.yely.bartrack_backend.domain.ValidationException;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -53,10 +55,7 @@ public class ItemService {
         existing.setCategory(dto.category());
         existing.setPrice(dto.price());
         existing.setQuantity(dto.quantity());
-
-        if (dto.active() != null) {
-            existing.setActive(dto.active());
-        }
+        existing.setActive(existing.getQuantity() > 0);
 
         return ItemMapper.toDTO(repository.save(existing));
     }
@@ -72,5 +71,25 @@ public class ItemService {
     public ItemEntity getEntityById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
+    }
+
+    @Transactional
+    public void sellItem(Long itemId, int quantity) {
+        ItemEntity item = repository.findById(itemId)
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
+
+        if (!item.isActive()) {
+            throw new ValidationException("Item is not active: " + item.getName());
+        }
+
+        if (item.getQuantity() < quantity) {
+            throw new ValidationException("Not enough stock for: " + item.getName());
+        }
+
+        item.setQuantity(item.getQuantity() - quantity);
+
+        if (item.getQuantity() == 0) {
+            item.setActive(false);
+        }
     }
 }

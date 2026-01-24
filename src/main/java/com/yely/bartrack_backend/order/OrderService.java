@@ -3,7 +3,6 @@ package com.yely.bartrack_backend.order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.yely.bartrack_backend.domain.ValidationException;
 import com.yely.bartrack_backend.item.ItemEntity;
 import com.yely.bartrack_backend.item.ItemService;
 import com.yely.bartrack_backend.orderItem.OrderItemEntity;
@@ -23,11 +22,7 @@ public class OrderService {
     private OrderItemEntity createOrderItem(OrderItemRequest req) {
         ItemEntity item = itemService.getEntityById(req.itemId());
 
-        if (item.getQuantity() < req.quantity()) {
-            throw new ValidationException("Not enough stock for: " + item.getName());
-        }
-
-        item.setQuantity(item.getQuantity() - req.quantity());
+        itemService.sellItem(item.getId(), req.quantity());
 
         OrderItemEntity orderItem = new OrderItemEntity();
         orderItem.setItem(item);
