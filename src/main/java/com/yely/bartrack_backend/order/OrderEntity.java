@@ -62,7 +62,11 @@ public class OrderEntity {
     }
 
     public void calculateAndSetTotal() {
-        this.totalPrice = items.stream()
+        if (this.items == null || this.items.isEmpty()) {
+            this.totalPrice = 0.0;
+            return;
+        }
+        this.totalPrice = this.items.stream()
                 .mapToDouble(item -> item.getPricePerUnit() * item.getQuantity())
                 .sum();
     }
