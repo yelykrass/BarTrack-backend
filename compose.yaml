@@ -5,4 +5,4 @@ services:
       - "MYSQL_DATABASE=p4_db"
       - "MYSQL_ROOT_PASSWORD=password"
     ports:
-      - "3306:3306"
+      - "3307:3306"
