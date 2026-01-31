@@ -56,7 +56,8 @@ class OrderServiceTest {
         mockItem.setActive(true);
 
         OrderItemRequest itemRequest = new OrderItemRequest(itemId, quantity);
-        OrderDTORequest orderRequest = new OrderDTORequest(List.of(itemRequest), paymentMethod);
+        OrderDTORequest orderRequest = new OrderDTORequest(List.of(itemRequest),
+                paymentMethod);
 
         when(userService.getCurrentUser()).thenReturn(mockUser);
         when(itemService.getEntityById(itemId)).thenReturn(mockItem);

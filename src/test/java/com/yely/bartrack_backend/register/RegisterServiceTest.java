@@ -60,10 +60,13 @@ class RegisterServiceTest {
 
         UserEntity result = registerService.registerUser(dto);
 
-        assertThat("Username should be converted to lowercase", result.getUsername(), is(lowerEmail));
-        assertThat("Password should be encoded", result.getPassword(), is(encodedPass));
+        assertThat("Username should be converted to lowercase", result.getUsername(),
+                is(lowerEmail));
+        assertThat("Password should be encoded", result.getPassword(),
+                is(encodedPass));
         assertThat("User should be active by default", result.isActive(), is(true));
-        assertThat("User should have default roles", result.getRoles(), hasItem(role));
+        assertThat("User should have default roles", result.getRoles(),
+                hasItem(role));
 
         verify(passwordPolicy).validate(rawPass);
         verify(userService).save(any(UserEntity.class));
@@ -73,7 +76,8 @@ class RegisterServiceTest {
     @DisplayName("Should throw ValidationException when user already exists")
     void registerUser_throwsValidationException_whenUserAlreadyExists() {
 
-        RegisterDTORequest dto = new RegisterDTORequest("existing@email.com", "pass");
+        RegisterDTORequest dto = new RegisterDTORequest("existing@email.com",
+                "pass");
 
         when(userService.existsByUsername("existing@email.com")).thenReturn(true);
 

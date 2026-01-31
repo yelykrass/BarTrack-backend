@@ -56,7 +56,8 @@ class UserServiceTest {
     void getUserById_throwsWhenNotFound() {
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
 
-        ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(2L));
+        ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class,
+                () -> userService.getUserById(2L));
         assertThat(ex.getMessage(), is("User not found"));
     }
 

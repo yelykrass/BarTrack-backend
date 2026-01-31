@@ -46,7 +46,8 @@ public class JwtAuthenticationFilterTest {
     }
 
     @Test
-    void doFilterInternal_noCookie_doesNotAuthenticate_and_continuesChain() throws ServletException, IOException {
+    void doFilterInternal_noCookie_doesNotAuthenticate_and_continuesChain()
+            throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -57,11 +58,13 @@ public class JwtAuthenticationFilterTest {
 
         assertThat("FilterChain should be invoked", chainCalled[0], is(true));
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        assertThat("No authentication should be set when no cookie present", auth, is(nullValue()));
+        assertThat("No authentication should be set when no cookie present", auth,
+                is(nullValue()));
     }
 
     @Test
-    void doFilterInternal_withValidToken_setsAuthentication_and_continuesChain() throws ServletException, IOException {
+    void doFilterInternal_withValidToken_setsAuthentication_and_continuesChain()
+            throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -72,7 +75,8 @@ public class JwtAuthenticationFilterTest {
         when(jwtUtils.validateToken(token)).thenReturn(true);
         when(jwtUtils.getUsernameFromToken(token)).thenReturn("alice");
 
-        UserDetails userDetails = new User("alice", "password", Collections.emptyList());
+        UserDetails userDetails = new User("alice", "password",
+                Collections.emptyList());
         when(userDetailsService.loadUserByUsername("alice")).thenReturn(userDetails);
 
         final boolean[] chainCalled = { false };
@@ -83,12 +87,15 @@ public class JwtAuthenticationFilterTest {
         assertThat("FilterChain should be invoked", chainCalled[0], is(true));
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         assertThat("Authentication should be set", auth, is(notNullValue()));
-        assertThat("Principal should be the loaded UserDetails", auth.getPrincipal(), is(userDetails));
-        assertThat("Credentials should be null", auth.getCredentials(), is(nullValue()));
+        assertThat("Principal should be the loaded UserDetails", auth.getPrincipal(),
+                is(userDetails));
+        assertThat("Credentials should be null", auth.getCredentials(),
+                is(nullValue()));
     }
 
     @Test
-    void doFilterInternal_invalidToken_skipsAuthentication_and_continuesChain() throws ServletException, IOException {
+    void doFilterInternal_invalidToken_skipsAuthentication_and_continuesChain()
+            throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -104,12 +111,14 @@ public class JwtAuthenticationFilterTest {
 
         assertThat("FilterChain should be invoked", chainCalled[0], is(true));
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        assertThat("Authentication should NOT be set when token is invalid", auth, is(nullValue()));
+        assertThat("Authentication should NOT be set when token is invalid", auth,
+                is(nullValue()));
         verify(jwtUtils, never()).getUsernameFromToken(any());
     }
 
     @Test
-    void doFilterInternal_jwtException_skipsAuthentication_and_continuesChain() throws ServletException, IOException {
+    void doFilterInternal_jwtException_skipsAuthentication_and_continuesChain()
+            throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -126,6 +135,7 @@ public class JwtAuthenticationFilterTest {
 
         assertThat("FilterChain should be invoked", chainCalled[0], is(true));
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        assertThat("Authentication should NOT be set due to exception", auth, is(nullValue()));
+        assertThat("Authentication should NOT be set due to exception", auth,
+                is(nullValue()));
     }
 }

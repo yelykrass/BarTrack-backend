@@ -50,7 +50,8 @@ class RegisterControllerTest {
     @WithMockUser(roles = "ADMIN")
     void registerUser_returns201_forAdmin() throws Exception {
 
-        RegisterDTORequest request = new RegisterDTORequest("admin@test.com", "StrongPass123!");
+        RegisterDTORequest request = new RegisterDTORequest("admin@test.com",
+                "StrongPass123!");
 
         UserEntity mockUser = UserEntity.builder().username("admin@test.com").build();
         when(registerService.registerUser(any())).thenReturn(mockUser);
@@ -68,7 +69,8 @@ class RegisterControllerTest {
     @DisplayName("should return 403 Forbidden when called by regular USER")
     @WithMockUser(roles = "USER")
     void registerUser_returns403_forNonAdmin() throws Exception {
-        RegisterDTORequest request = new RegisterDTORequest("user@test.com", "StrongPass123!");
+        RegisterDTORequest request = new RegisterDTORequest("user@test.com",
+                "StrongPass123!");
 
         mockMvc.perform(post("/api/v1/register")
                 .with(csrf())

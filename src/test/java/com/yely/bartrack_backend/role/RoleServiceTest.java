@@ -38,7 +38,8 @@ class RoleServiceTest {
     void getById_throwsResourceNotFoundException_whenNotFound() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
-        org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, () -> service.getById(99L));
+        org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class,
+                () -> service.getById(99L));
     }
 
     @Test

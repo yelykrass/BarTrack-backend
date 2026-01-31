@@ -56,7 +56,8 @@ public class SecurityUserTest {
         Collection<? extends GrantedAuthority> authorities = securityUser.getAuthorities();
 
         assertThat(authorities, hasSize(1));
-        assertThat(authorities, hasItem(hasProperty("authority", equalTo("ROLE_USER"))));
+        assertThat(authorities, hasItem(hasProperty("authority",
+                equalTo("ROLE_USER"))));
 
         verify(roleEntity).getName();
     }
