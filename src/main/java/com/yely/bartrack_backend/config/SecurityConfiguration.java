@@ -38,7 +38,7 @@ public class SecurityConfiguration {
         String endpoint;
 
         @Bean
-        SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtUtils, jpaUserDetailsService);
 
                 http
@@ -49,20 +49,14 @@ public class SecurityConfiguration {
 
                                 .formLogin(form -> form.disable())
                                 .authorizeHttpRequests(auth -> auth
-                                                // .requestMatchers("/api/v1/check-session").permitAll()
                                                 .requestMatchers(endpoint + "/auth/**").permitAll()
                                                 .requestMatchers("/h2-console/**").permitAll()
 
-                                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**",
+                                                .requestMatchers(
+                                                                "/v3/api-docs/**",
+                                                                "/swagger-ui/**",
                                                                 "/swagger-ui.html")
                                                 .permitAll()
-                                                // .requestMatchers("/public").permitAll()
-
-                                                // .requestMatchers(HttpMethod.POST, endpoint + "/register")
-                                                // .hasRole("ADMIN")
-                                                // .requestMatchers(endpoint + "/login").hasAnyRole("ADMIN", "USER")
-                                                // .requestMatchers(HttpMethod.GET, endpoint +
-                                                // "/private").hasRole("ADMIN")
                                                 .anyRequest().authenticated())
                                 .addFilterBefore(jwtFilter,
                                                 org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
@@ -84,7 +78,7 @@ public class SecurityConfiguration {
         CorsConfigurationSource corsConfiguration() {
                 CorsConfiguration configuration = new CorsConfiguration();
                 configuration.setAllowCredentials(true);
-                configuration.setAllowedOrigins(Arrays.asList("https://localhost:5173"));
+                configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:8080"));
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
 
