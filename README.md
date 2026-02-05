@@ -236,6 +236,20 @@ The application is built with **security and portability** in mind, following th
 > [!NOTE]
 > **Educational Context:** For ease of demonstration, default values are provided in `application.properties`. In a production environment, these are overridden by system environment variables, and the `JWT_SECRET` is kept out of the source control.
 ---
+
+### 🗄️ Database Configuration
+The project is configured to work with two types of databases depending on the context:
+
+* **Production (MVP):** By default, the application is set up to use **MySQL**. 
+* **Testing:** All automated tests are pre-configured to use the **H2 In-Memory Database**. This allows for running tests in a clean, isolated environment without the need for a local MySQL installation.
+
+In `src/main/resources/application.properties`, locate the following line:
+
+```properties
+# Toggle between 'h2' for testing and 'mysql' for MVP
+spring.profiles.active=mysql
+```
+---
 ## 🧠 Design Principles
 
 - SOLID & DRY principles
