@@ -222,7 +222,20 @@ docker run -p 8080:8080 bartrack-backend
 Once the app is running, visit http://localhost:8080/swagger-ui.html
 
 > This project uses **HttpOnly Cookies** for JWT storage. Since Swagger UI has known limitations with automatic cookie handling in some browser environments, you may experience `401 Unauthorized` errors even after a successful login.
+---
+## ⚙️ Configuration & Environment
 
+The application is built with **security and portability** in mind, following the "Twelve-Factor App" methodology for configuration.
+
+| Variable | Description | Default Value (Dev) |
+|----------|-------------|---------------------|
+| `JWT_SECRET` | Base64 secret key for signing tokens | *Pre-configured for Demo* |
+| `JWT_ACCESS_EXP` | Access token lifespan (ms) | 900000 (15m) |
+| `JWT_REFRESH_EXP`| Refresh token lifespan (ms) | 604800000 (7d) |
+
+> [!NOTE]
+> **Educational Context:** For ease of demonstration, default values are provided in `application.properties`. In a production environment, these are overridden by system environment variables, and the `JWT_SECRET` is kept out of the source control.
+---
 ## 🧠 Design Principles
 
 - SOLID & DRY principles
