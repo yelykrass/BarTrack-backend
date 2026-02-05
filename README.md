@@ -187,7 +187,7 @@ The project follows a comprehensive testing strategy to ensure reliability and s
 
 > [!IMPORTANT]
 > **Current Status:** All controllers and core services are covered.
-> ![Test Coverage Result](assets/test_1.png, assets/test_2.png)
+> ![Test Coverage Result](<img src="assets/test_1.png" width="45%" /> <img src="assets/test_2.png" width="45%" />)
 
 ---
 
